@@ -1,7 +1,10 @@
-<% include header.ejs %>
-    <div class="well jumbotron">
-        <h1><%= title %></h1>
-        <p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
-    </div>
-    <% include footer.ejs %>
+<%- include header %>
+<% posts.forEach(function (post, index) { %>
+  <p><h2><a href="#"><%= post.title %></a></h2></p>
+  <p class="info">
+    作者：<a href="#"><%= post.name %></a> | 
+    日期：<%= post.time.minute %>
+  </p>
+  <p><%- post.post %></p>
+<% }) %>
+<%- include footer %>
