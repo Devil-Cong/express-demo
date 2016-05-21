@@ -14,19 +14,20 @@ Post.prototype.save = function(callback) {
     var date = new Date();
     //存储各种时间格式，方便以后扩展
     var time = {
-            date: date,
-            year: date.getFullYear(),
-            month: date.getFullYear() + "-" + (date.getMonth() + 1),
-            day: date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
-            minute: date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +
-                date.getHours() + ":" + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes())
-        }
-        //要存入数据库的文档
+        date: date,
+        year: date.getFullYear(),
+        month: date.getFullYear() + "-" + (date.getMonth() + 1),
+        day: date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
+        minute: date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +
+            date.getHours() + ":" + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes())
+    };
+    //要存入数据库的文档
     var post = {
         name: this.name,
         time: time,
         title: this.title,
-        post: this.post
+        post: this.post,
+        comments: []
     };
     //打开数据库
     mongodb.open(function(err, db) {
@@ -111,7 +112,12 @@ Post.getOne = function(name, day, title, callback) {
                     return callback(err);
                 }
                 //解析 markdown 为 html
-                doc.post = markdown.toHTML(doc.post);
+                if (doc) {
+                    doc.post = markdown.toHTML(doc.post);
+                    doc.comments.forEach(function(comment) {
+                        comment.content = markdown.toHTML(comment.content);
+                    });
+                }
                 callback(null, doc); //返回查询的一篇文章
             });
         });
